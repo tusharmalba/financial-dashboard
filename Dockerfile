@@ -1,4 +1,4 @@
-# === Build frontend ===
+# --------- FRONTEND STAGE -------------
 FROM node:18-alpine AS frontend
 
 WORKDIR /app/frontend
@@ -7,22 +7,22 @@ RUN npm install
 COPY frontend-new/ ./
 RUN npm run build
 
-# === Build backend ===
+# --------- BACKEND STAGE -------------
 FROM node:18-alpine AS backend
 
-WORKDIR /app
-COPY backend/package*.json ./backend/
-RUN cd backend && npm install
+WORKDIR /app/backend
+COPY backend/package*.json ./
+RUN npm install
+COPY backend/ ./
 
-# Copy frontend build into backend public folder
-COPY --from=frontend /app/frontend/build ./backend/public
-COPY backend ./backend
+# Copy frontend build into backend
+COPY --from=frontend /app/frontend/build ./public
 
-# === Final production image ===
+# --------- FINAL STAGE (PRODUCTION IMAGE) -------------
 FROM node:18-alpine
 
 WORKDIR /app
-COPY --from=backend /app/backend ./
+COPY --from=backend /app/backend .
 
 EXPOSE 5000
 CMD ["npm", "run", "start"]
