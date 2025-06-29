@@ -24,7 +24,5 @@ FROM node:18-alpine
 WORKDIR /app
 COPY --from=backend /app/backend ./
 
-# Expose the port your backend uses
 EXPOSE 5000
-
-CMD [ "npm", "run", "start" ]
+CMD ["npm", "run", "start"]
